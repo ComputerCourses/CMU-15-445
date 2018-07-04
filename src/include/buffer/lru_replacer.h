@@ -9,12 +9,15 @@
 
 #pragma once
 
+#include <list>
+#include <unordered_map>
+#include <mutex>
 #include "buffer/replacer.h"
 #include "hash/extendible_hash.h"
 
 namespace cmudb {
 
-template <typename T> class LRUReplacer : public Replacer<T> {
+template<typename T> class LRUReplacer : public Replacer<T> {
 public:
   // do not change public interface
   LRUReplacer();
@@ -31,6 +34,9 @@ public:
 
 private:
   // add your member variables here
+  std::list<T> _list;
+  std::unordered_map<T, typename std::list<T>::iterator> _id2node;
+  std::mutex _mtx;
 };
 
 } // namespace cmudb
