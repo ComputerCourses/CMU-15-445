@@ -12,9 +12,10 @@
 #include <cstdlib>
 #include <vector>
 #include <string>
-
+#include <memory>
+#include <cassert>
+#include <mutex>
 #include "hash/hash_table.h"
-
 namespace cmudb {
 
 template <typename K, typename V>
@@ -32,8 +33,23 @@ public:
   bool Find(const K &key, V &value) override;
   bool Remove(const K &key) override;
   void Insert(const K &key, const V &value) override;
+  void InsertWithoutSplit(const K &key, const V &value);
 
 private:
   // add your own member variables here
+  int globalDepth;
+  size_t numBuckets;
+  size_t bucketSize;
+
+  typedef struct Bucket
+  {
+	  int localDepth;
+	  size_t freeCount;
+	  K* keys;
+	  V* values;
+  } Bucket;
+
+  std::mutex mtx;
+  Bucket** buckets;
 };
 } // namespace cmudb

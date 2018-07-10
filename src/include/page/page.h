@@ -26,8 +26,20 @@ public:
   inline char *GetData() { return data_; }
   // get page id
   inline page_id_t GetPageId() { return page_id_; }
+  inline void SetPageId(page_id_t id) { page_id_ = id; }
   // get page pin count
   inline int GetPinCount() { return pin_count_; }
+  inline void IncreasePinCount() { pin_count_++; }
+  inline void DecreasePinCount() { pin_count_--; }
+  inline bool IsDirty() const { return is_dirty_; }
+  inline void SetDirty(bool dirty) { is_dirty_ = dirty; }
+
+  inline void Reset() {
+    ResetMemory();
+    page_id_ = INVALID_PAGE_ID;
+    pin_count_ = 0;
+    is_dirty_ = false;
+  }
   // method use to latch/unlatch page content
   inline void WUnlatch() { rwlatch_.WUnlock(); }
   inline void WLatch() { rwlatch_.WLock(); }

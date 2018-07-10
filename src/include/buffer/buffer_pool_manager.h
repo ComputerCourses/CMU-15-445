@@ -9,6 +9,7 @@
 #pragma once
 #include <list>
 #include <mutex>
+#include <unordered_map>
 
 #include "buffer/lru_replacer.h"
 #include "disk/disk_manager.h"
@@ -35,12 +36,17 @@ public:
   bool DeletePage(page_id_t page_id);
 
 private:
+  void releaseDirty(Page *page);
+  Page *allocatePage(page_id_t &page_id);
+private:
   size_t pool_size_;
   // array of pages
   Page *pages_;
   DiskManager disk_manager_;
   // to keep track of page id and its memory location
   HashTable<page_id_t, Page *> *page_table_;
+
+  std::unordered_map<page_id_t, Page *> dirty_pages_;
   // to collect unpinned pages for replacement
   Replacer<Page *> *replacer_;
   // to collect free pages for replacement
